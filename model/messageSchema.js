@@ -1,17 +1,33 @@
 
 import mongoose from 'mongoose';
 
-const messageSchema = new mongoose.Schema( {
-    text: String,
-    name: String,
-    id: String,
-    socketID: String
+const schema = new mongoose.Schema( {
+    friendsAndConversationId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "friendsAndConversation",
+    },
+    sender_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+        required: true
+    },
+    message: {
+        textmessage: {
+            type: String
+        }, file: {
+            type: Array
+        }
+    }
 
-} );
 
-const Message = mongoose.model( 'Message', messageSchema );
+}, { timestamps: true } )
 
-export default Message;
+const messagesmodel = new mongoose.model( "messages", schema )
+
+export default messagesmodel
+
+
+
 
 
 

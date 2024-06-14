@@ -1,11 +1,30 @@
 import Message from "../model/messageSchema.js";
+import { uploads } from "../utils/multer.js";
 
-export const sendMessage = async ( req, res ) => {
+
+export const createMessage = async ( req, res ) => {
+
     try {
-        const { text } = req.body;
-        const message = new Message( { text } )
-        await message.save()
-        res.status( 201 ).json( message )
+        const { senderID, friendsAndConversationId, textmessage } = req.body;
+
+        const fileData = req.file ? [ req.file.filename ] : [];
+
+        const newMessage = new messagesmodel( {
+            friendsAndConversationId: conversationObjectId,
+            sender_id: senderObjectId,
+            message: {
+                textmessage: textmessage,
+                file: fileData
+            }
+        } );
+
+        const savedMessage = await newMessage.save();
+
+        res.status( 201 ).json( {
+            data: savedMessage,
+            status: 'Message created successfully'
+        } );
+
     } catch ( error ) {
         res.status( 500 ).json( { error: error.message } )
     }

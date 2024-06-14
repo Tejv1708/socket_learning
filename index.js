@@ -2,11 +2,13 @@ import express from 'express';
 import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 import { createServer } from 'http'
-
+import userRouter from './Routes/userRoutes.js'
 import cors from 'cors'
 import Message from './model/messageSchema.js';
 import router from './Routes/messageRoutes.js';
+import conversationRoute from './Routes/FriendConversationRoute.js'
 import 'dotenv/config'
+
 
 
 const app = express();
@@ -21,9 +23,8 @@ app.use( cors() )
 
 app.use( express.json() );
 app.use( '/', router )
-
-
-
+app.use( '/user', userRouter )
+app.use( '/create-conversation', conversationRoute )
 
 
 server.listen( 3000, () => console.log( 'Server is running on PORT 3000' ) )

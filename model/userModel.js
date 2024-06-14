@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import validator from "validator";
 const userSchema = new mongoose.Schema( {
     name: {
         type: String,
@@ -8,7 +8,6 @@ const userSchema = new mongoose.Schema( {
     email: {
         type: String,
         required: true,
-        unique: true,
         lowercase: true,
         validate: [ validator.isEmail, 'Please Provide the valid email' ],
     },
@@ -29,4 +28,15 @@ const userSchema = new mongoose.Schema( {
             message: 'Password are not the same',
         },
     },
-} )
+
+
+}, {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+}, )
+
+
+
+
+const User = mongoose.model( 'User', userSchema );
+export default User;
