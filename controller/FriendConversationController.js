@@ -20,11 +20,11 @@ export const generatedId = async ( req, res, next ) => {
             return res.status( 404 ).json( 'Chat Group is already created ' );
         }
 
-        // const senderDetail = User.findById( senderID ).populate( "User" )
+
         // const receiverDetail = User.findById( receiverID ).populate( "User" )
 
         // console.log( receiverDetail )
-        // console.log( senderDetail )
+
         // Create new FriendConversation document
 
         console.log()
@@ -32,6 +32,8 @@ export const generatedId = async ( req, res, next ) => {
             receiverID: receiverID,
             senderID: senderID
         } );
+
+        // const senderDetail = FriendConversation.findById( senderID ).populate( "senderID" )
 
         res.status( 201 ).json( {
             data: newConversation,

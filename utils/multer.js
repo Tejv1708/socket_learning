@@ -13,6 +13,21 @@ const storage = multer.diskStorage( {
 } )
 
 
+
+
+function checkFileType( file, cb ) {
+    const filetypes = /jpeg|jpg|txt|png|gif|pdf/;
+    const extname = filetypes.test( path.extname( file.originalname ).toLowerCase() );
+    const mimetype = filetypes.test( file.mimetype );
+
+    if ( mimetype && extname ) {
+        return cb( null, true );
+    } else {
+        cb( 'Error: Images and PDFs only!' );
+    }
+    console.log( "Hii" )
+}
+
 export const uploads = multer( {
     storage: storage,
     limits: { fileSize: 1000000 },
@@ -22,19 +37,4 @@ export const uploads = multer( {
 } )
 
 
-function checkFileType( file, cb ) {
-    // Allowed extensions
-    const filetypes = /jpeg|jpg|png|gif|pdf/;
-    // Check extension
-    const extname = filetypes.test( path.extname( file.originalname ).toLowerCase() );
-    // Check mime type
-    const mimetype = filetypes.test( file.mimetype );
-
-    if ( mimetype && extname ) {
-        return cb( null, true );
-    } else {
-        cb( 'Error: Images and PDFs only!' );
-    }
-}
-
-export default multer
+export default uploads

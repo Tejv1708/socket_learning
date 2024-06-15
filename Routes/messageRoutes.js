@@ -3,7 +3,7 @@ import { createMessage, deleteMessage, getMessage } from '../controller/messageC
 import { uploads } from '../utils/multer.js';
 const router = express.Router();
 
-router.post( '/', uploads.array( 'multipleFiles', 5 ), createMessage )
+router.post( '/', uploads.array( 'images', 6 ), createMessage )
 
 router.get( '/', getMessage )
 

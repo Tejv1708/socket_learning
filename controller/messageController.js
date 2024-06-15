@@ -1,17 +1,43 @@
+import FriendConversation from "../model/FriendConversationId.js";
 import Message from "../model/messageSchema.js";
-import { uploads } from "../utils/multer.js";
+
 
 
 export const createMessage = async ( req, res ) => {
 
     try {
-        const { senderID, friendsAndConversationId, textmessage } = req.body;
+        let check = true;
+        const { sender_id, friendsAndConversationId, textmessage } = req.body;
 
-        const fileData = req.file ? [ req.file.filename ] : [];
+        // This is how we handle the multiple files
+        const fileData = req.files ? req.files.map( file => file.path ) : [];
 
-        const newMessage = new messagesmodel( {
-            friendsAndConversationId: conversationObjectId,
-            sender_id: senderObjectId,
+        const checkFriendID = await FriendConversation.findById( friendsAndConversationId ).populate( 'senderID' )
+
+        const ref_receiver_id = checkFriendID.receiverID.toString()
+
+        // Convert ObjectId to string
+        const ref_sender_id = checkFriendID.senderID._id.toString();
+
+        console.log( sender_id === ref_sender_id );
+        console.log( sender_id === ref_receiver_id );
+        console.log( !( sender_id === ref_sender_id ) || !( sender_id === ref_receiver_id ) );
+
+
+
+
+        // Compare sender_id and ref_sender_id
+        if ( !( ( sender_id === ref_sender_id ) || ( sender_id === ref_receiver_id ) ) ) {
+            return res.status( 404 ).json( {
+                message: 'FriendConversation ID is not generated. Please first create the FriendConversation ID'
+            } );
+        }
+
+
+
+        const newMessage = new Message( {
+            friendsAndConversationId: friendsAndConversationId,
+            sender_id: sender_id,
             message: {
                 textmessage: textmessage,
                 file: fileData

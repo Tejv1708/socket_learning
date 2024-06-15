@@ -3,6 +3,9 @@ import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 import { createServer } from 'http'
 import userRouter from './Routes/userRoutes.js'
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import path from 'path';
 import cors from 'cors'
 import Message from './model/messageSchema.js';
 import router from './Routes/messageRoutes.js';
@@ -14,13 +17,13 @@ import 'dotenv/config'
 const app = express();
 const server = createServer( app )
 //Instance of the socket.io 
-
+const __filename = fileURLToPath( import.meta.url );
+const __dirname = dirname( __filename );
 const io = new Server( server );
 
 
 app.use( cors() )
-
-
+app.use( '/uploads', express.static( path.join( __dirname, 'uploads' ) ) )
 app.use( express.json() );
 app.use( '/', router )
 app.use( '/user', userRouter )
