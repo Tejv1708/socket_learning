@@ -11,6 +11,8 @@ import Message from './model/messageSchema.js';
 import router from './Routes/messageRoutes.js';
 import conversationRoute from './Routes/FriendConversationRoute.js'
 import 'dotenv/config'
+import AppError from './utils/AppError.js';
+import { globalErrorHandler } from './controller/errorContoller.js';
 
 
 
@@ -22,12 +24,15 @@ const __dirname = dirname( __filename );
 const io = new Server( server );
 
 
+app.use( express.urlencoded( { extended: true } ) );
 app.use( cors() )
 app.use( '/uploads', express.static( path.join( __dirname, 'uploads' ) ) )
 app.use( express.json() );
 app.use( '/', router )
 app.use( '/user', userRouter )
 app.use( '/create-conversation', conversationRoute )
+
+app.use( express.json() );
 
 
 server.listen( 3000, () => console.log( 'Server is running on PORT 3000' ) )

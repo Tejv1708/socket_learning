@@ -7,9 +7,10 @@ const schema = new mongoose.Schema( {
         ref: "friendsAndConversation",
     },
     sender_id: {
+        // type: String
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users",
-        required: true
+        ref: "User",
+        // required: true
     },
     message: {
         textmessage: {

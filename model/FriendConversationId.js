@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 const FriendConversationSchema = new mongoose.Schema( {
-    senderID: {
-        type: mongoose.Schema.ObjectId,
+    sender_id: {
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
     receiverID: {

@@ -1,16 +1,16 @@
 import FriendConversation from '../model/FriendConversationId.js'
+import catchAsync from '../utils/catchAsync.js';
 
 
-
-export const generatedId = async ( req, res, next ) => {
+export const generatedId = catchAsync( async ( req, res, next ) => {
     try {
-        const { senderID, receiverID } = req.body;
+        const { sender_id, receiverID } = req.body;
         console.log( "IDs", req.body )
 
         const existingConversation = await FriendConversation.findOne( {
             $or: [
-                { senderID: senderID, receiverID: receiverID },
-                { senderID: receiverID, receiverID: senderID }
+                { sender_id: sender_id, receiverID: receiverID },
+                { sender_id: receiverID, receiverID: sender_id }
             ]
         } );
 
@@ -30,7 +30,7 @@ export const generatedId = async ( req, res, next ) => {
         console.log()
         const newConversation = await FriendConversation.create( {
             receiverID: receiverID,
-            senderID: senderID
+            sender_id: sender_id
         } );
 
         // const senderDetail = FriendConversation.findById( senderID ).populate( "senderID" )
@@ -44,7 +44,7 @@ export const generatedId = async ( req, res, next ) => {
         console.log( err );
         res.status( 500 ).json( 'Internal Server Error' );
     }
-};
+} );
 
 // export const generatedId = async ( req, res, next ) => {
 //     try {
