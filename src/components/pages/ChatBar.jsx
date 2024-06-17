@@ -1,21 +1,27 @@
 import React from 'react';
 
-const ChatBar = ( { messages } ) => {
-    // Extract unique usernames from messages
-    const activeUsers = [ ...new Set( messages.map( data => data.name ) ) ];
+const ChatBar = ( { messages, handleAdd } ) => {
+    // Use a Set to get unique user names
+    const uniqueUsers = [ ...new Set( messages.map( message => message.name ) ) ];
 
+
+    const handleClick = ( e ) => {
+        handleAdd( uniqueUsers )
+    }
     return (
-        <div className="chat__sidebar bg-gray-200 p-4">
-            <h2 className="text-xl font-semibold mb-4">Open Chat</h2>
-
-            <div>
-                <h4 className="text-lg font-semibold mb-2">ACTIVE USERS</h4>
-                <div className="flex flex-col gap-2">
-                    { activeUsers.map( ( username, index ) => (
-                        <li key={ index }>{ username }</li>
-                    ) ) }
-                </div>
-            </div>
+        <div className="h-full p-4 bg-gray-800 text-white">
+            <h2 className="text-xl font-bold mb-4">Users</h2>
+            <ul>
+                {
+                    uniqueUsers.map( ( name, index ) => (
+                        <li key={ index } className="mb-2">
+                            <button onClick={ handleClick } className="w-full text-left bg-gray-700 px-4 py-2 rounded-md hover:bg-gray-600">
+                                { name }
+                            </button>
+                        </li>
+                    ) )
+                }
+            </ul>
         </div>
     );
 };

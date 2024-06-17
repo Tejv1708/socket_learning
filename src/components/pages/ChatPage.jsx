@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import ChatBody from './ChatBody';
 import ChatBar from './ChatBar';
 import ChatFooter from './ChatFooter';
-import { data } from 'autoprefixer';
 import instance from '../../axios/instance';
 
 const ChatPage = ( { socket } ) => {
     const [ messages, setMessages ] = useState( [] );
-
+    const [ user, setUser ] = useState( [] )
     useEffect( () => {
         async function fetchData() {
             try {
@@ -21,19 +20,26 @@ const ChatPage = ( { socket } ) => {
     }, [] );
 
     useEffect( () => {
-        socket.on( 'messageResponse', ( data ) => setMessages( [ ...messages, data ] ) )
-    } )
+        socket.on( 'messageResponse', ( data ) => setMessages( [ ...messages, data ] ) );
+    } );
 
+    function handleAdd( data ) {
+        setUser( data )
+        console.log( data )
+    }
 
     return (
-        <div >
-            <ChatBar messages={ messages } />
-            <div >
-                <ChatBody messages={ messages } />
+        <div className="flex h-screen">
+            <div className="w-1/4 bg-gray-800 text-white">
+                <ChatBar handleAdd={ handleAdd } messages={ messages } />
+            </div>
+            <div className="w-3/4 flex flex-col">
+                <ChatBody user={ user } messages={ messages } />
                 <ChatFooter socket={ socket } />
             </div>
         </div>
     );
-}
+};
 
-export default ChatPage
+export default ChatPage;
+

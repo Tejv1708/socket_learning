@@ -1,32 +1,91 @@
-import React, { useState } from 'react'
-import Navbar from '../Navbar/Navbar'
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import instance from '../../axios/instance';
 
 const Home = () => {
-    const navigate = useNavigate();
-    const [ username, setUserName ] = useState( '' );
 
-    const handleSubmit = ( e ) => {
+    const [ name, setName ] = useState( '' );
+    const [ email, setEmail ] = useState( '' );
+    const [ password, setPassword ] = useState( '' );
+    const [ passwordConfirm, setPasswordConfirm ] = useState( '' );
+
+    const navigate = useNavigate();
+
+    const handleSubmit = async ( e ) => {
         e.preventDefault();
-        localStorage.setItem( 'userName', username );
-        navigate( '/chat' ); // Redirect to the chat page after signing in
+
+        try {
+            const { data: { data } } = await instance.post( 'user', {
+                name,
+                email,
+                password,
+                passwordConfirm,
+            } );
+            console.log( data._id );
+
+            localStorage.setItem( 'activeUser', name )
+            localStorage.setItem( 'id', data._id )
+            navigate( '/users', { state: data._id } ); // Redirect to the chat page after signing in
+        } catch ( error ) {
+            console.log( error );
+        }
+
+
     };
+
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
                 <h2 className="text-2xl font-semibold mb-4">Sign In To Open Chat</h2>
+
                 <form onSubmit={ handleSubmit }>
                     <div className="mb-4">
-                        <label htmlFor="username" className="block text-gray-700 font-medium">Username</label>
+                        <label htmlFor="name" className="block text-gray-700 font-medium">Name</label>
                         <input
                             type="text"
-                            id="username"
-                            name="username"
-                            value={ username }
-                            onChange={ ( e ) => setUserName( e.target.value ) }
+                            id="name"
+                            name="name"
+                            value={ name }
+                            onChange={ ( e ) => setName( e.target.value ) }
                             className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            minLength={ 6 }
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="email" className="block text-gray-700 font-medium">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value={ email }
+                            onChange={ ( e ) => setEmail( e.target.value ) }
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="password" className="block text-gray-700 font-medium">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            value={ password }
+                            onChange={ ( e ) => setPassword( e.target.value ) }
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="passwordConfirm" className="block text-gray-700 font-medium">Confirm Password</label>
+                        <input
+                            type="password"
+                            id="passwordConfirm"
+                            name="passwordConfirm"
+                            value={ passwordConfirm }
+                            onChange={ ( e ) => setPasswordConfirm( e.target.value ) }
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                             required
                         />
                     </div>
@@ -43,5 +102,6 @@ const Home = () => {
 };
 
 export default Home;
+
 
 

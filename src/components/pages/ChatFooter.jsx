@@ -5,19 +5,20 @@ const ChatFooter = ( { socket } ) => {
 
     const handleSendMessage = ( e ) => {
         e.preventDefault();
-        if ( message.trim && localStorage.getItem( 'userName' ) ) {
+        if ( message.trim() && localStorage.getItem( 'userName' ) ) {
             socket.emit( 'message', {
                 text: message,
                 name: localStorage.getItem( 'userName' ),
                 id: `${ socket.id }${ Math.random() }`,
-                socketID: socket.id
-            } )
+                socketID: socket.id,
+                createdAt: Date.now()
+            } );
         }
         setMessage( '' );
     };
 
     return (
-        <div className="chat__footer bg-gray-100 p-4">
+        <div className="bg-gray-100 p-4 relative" >
             <form onSubmit={ handleSendMessage } className="flex">
                 <input
                     type="text"
