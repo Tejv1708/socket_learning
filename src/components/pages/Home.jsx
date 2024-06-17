@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import instance from '../../axios/instance';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 const Home = () => {
 
@@ -10,6 +11,7 @@ const Home = () => {
     const [ passwordConfirm, setPasswordConfirm ] = useState( '' );
 
     const navigate = useNavigate();
+
 
     const handleSubmit = async ( e ) => {
         e.preventDefault();
@@ -29,7 +31,6 @@ const Home = () => {
         } catch ( error ) {
             console.log( error );
         }
-
 
     };
 

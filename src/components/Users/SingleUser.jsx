@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import instance from '../../axios/instance'
 import { useLocation, useParams } from 'react-router-dom'
-import Messages from '../../messages/Messages'
 
 const SingleUser = () => {
     const { id } = useParams()
