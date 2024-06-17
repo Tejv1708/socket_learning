@@ -5,7 +5,7 @@ const FriendConversationSchema = new mongoose.Schema( {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    receiverID: {
+    receiver_id: {
         type: mongoose.Schema.ObjectId,
         ref: 'User'
     }

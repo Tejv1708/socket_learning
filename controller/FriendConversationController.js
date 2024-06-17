@@ -4,13 +4,13 @@ import catchAsync from '../utils/catchAsync.js';
 
 export const generatedId = catchAsync( async ( req, res, next ) => {
     try {
-        const { sender_id, receiverID } = req.body;
+        const { sender_id, receiver_id } = req.body;
         console.log( "IDs", req.body )
 
         const existingConversation = await FriendConversation.findOne( {
             $or: [
-                { sender_id: sender_id, receiverID: receiverID },
-                { sender_id: receiverID, receiverID: sender_id }
+                { sender_id: sender_id, receiver_id: receiver_id },
+                { sender_id: receiver_id, receiver_id: sender_id }
             ]
         } );
 
@@ -27,11 +27,12 @@ export const generatedId = catchAsync( async ( req, res, next ) => {
 
         // Create new FriendConversation document
 
-        console.log()
+
         const newConversation = await FriendConversation.create( {
-            receiverID: receiverID,
+            receiver_id: receiver_id,
             sender_id: sender_id
         } );
+        console.log( newConversation )
 
         // const senderDetail = FriendConversation.findById( senderID ).populate( "senderID" )
 

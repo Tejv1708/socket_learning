@@ -2,9 +2,9 @@
 import mongoose from 'mongoose';
 
 const schema = new mongoose.Schema( {
-    friendsAndConversationId: {
+    friendsAndConversation_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "friendsAndConversation",
+        ref: "FriendConversation",
     },
     sender_id: {
         // type: String
@@ -23,7 +23,7 @@ const schema = new mongoose.Schema( {
 
 }, { timestamps: true } )
 
-const messagesmodel = new mongoose.model( "messages", schema )
+const messagesmodel = new mongoose.model( "Message", schema )
 
 export default messagesmodel
 
