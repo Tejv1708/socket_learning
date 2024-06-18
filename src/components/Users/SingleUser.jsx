@@ -1,12 +1,17 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import instance from '../../axios/instance'
 import { useLocation, useParams } from 'react-router-dom'
+import ChatBar from '../pages/ChatBar'
+import ChatBody from '../pages/ChatBody'
+import ChatFooter from '../pages/ChatFooter'
+import { Socket } from 'socket.io-client'
 
-const SingleUser = () => {
+const SingleUser = ( { socket } ) => {
+
+    const [ loading, setIsLoading ] = useState( true )
     const { id } = useParams()
-    const location = useLocation()
-    console.log( typeof ( id ) )
-    console.log( typeof ( localStorage.getItem( "id" ) ) )
+    // console.log( typeof ( id ) )
+    // console.log( typeof ( localStorage.getItem( "id" ) ) )
     // console.log( localStorage.getItem( "activeUser" ) )
 
     async function handleConversationId() {
@@ -15,21 +20,40 @@ const SingleUser = () => {
             receiver_id: id
         } )
     }
+    console.log( "sender_id : ", localStorage.getItem( "id" ) )
+    console.log( "receiver_id : ", id )
 
     useEffect( () => {
-        async function User() {
-            const user = await instance.get( `/user/${ id }` )
-            console.log( user )
-        }
-        User()
-    } )
+        socket.emit( 'send-req', { sender_id: localStorage.getItem( "id" ), receiver_id: id } )
+    }, [] )
+    useEffect( () => {
+
+        const timer = setTimeout( () => {
+            async function User() {
+                const user = await instance.get( `/user/${ id }` )
+                console.log( user )
+                setIsLoading( false )
+            }
+            User()
+        }, 3000 )
+        return () => clearTimeout( timer );
+    }, [] )
     return (
 
-        <div className=''>
-            <div>
-                <Messages />
+        loading ? (
+            <div> Loading..</div >
+        ) : (
+            <div className="flex h-screen">
+                <div className="w-1/4 bg-gray-800 text-white">
+                    <ChatBar />
+                </div>
+                <div className="w-3/4 flex flex-col">
+                    <ChatBody />
+                    <ChatFooter />
+                </div>
             </div>
-        </div>
+        )
+
 
     )
 }

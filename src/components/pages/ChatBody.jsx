@@ -77,7 +77,7 @@ const ChatBody = ( { messages, user } ) => {
                 {/* This shows messages */ }
                 <div className="flex-grow overflow-y-auto p-4">
                     <ul>
-                        { chatMessages.map( ( data, index ) => (
+                        { chatMessages && chatMessages.map( ( data, index ) => (
                             <li
                                 key={ index }
                                 ref={ chatMessages.length === index + 1 ? lastMessageRef : null }

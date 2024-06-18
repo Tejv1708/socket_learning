@@ -21,9 +21,9 @@ function App() {
           <Routes>
             <Route path='/' element={ <Home socket={ socket } /> }></Route>
             <Route path='/chat' element={ <ChatPage socket={ socket } /> }></Route>
-            <Route path='/users' element={ <UserList /> } >
+            <Route path='/users' element={ <UserList socket={ socket } /> } >
             </Route>
-            <Route path='/users/:id' element={ <SingleUser /> } />
+            <Route path='/users/:id' element={ <SingleUser socket={ socket } /> } />
           </Routes>
         </div>
       </BrowserRouter>

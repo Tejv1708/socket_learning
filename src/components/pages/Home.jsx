@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import instance from '../../axios/instance';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { Socket } from 'socket.io-client';
 
-const Home = () => {
+const Home = ( { socket } ) => {
 
     const [ name, setName ] = useState( '' );
     const [ email, setEmail ] = useState( '' );
@@ -24,7 +25,9 @@ const Home = () => {
                 passwordConfirm,
             } );
             console.log( data._id );
-
+            socket.emit( 'new-user-added', {
+                data
+            } )
             localStorage.setItem( 'activeUser', name )
             localStorage.setItem( 'id', data._id )
             navigate( '/users', { state: data._id } ); // Redirect to the chat page after signing in
