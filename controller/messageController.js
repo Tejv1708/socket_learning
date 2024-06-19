@@ -1,6 +1,6 @@
 import FriendConversation from "../model/FriendConversationId.js";
 import Message from "../model/messageSchema.js";
-import catchAsync from '../utils/catchAsync.js'
+
 
 
 export const createMessage = async ( req, res, next ) => {

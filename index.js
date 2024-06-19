@@ -11,9 +11,11 @@ import Message from './model/messageSchema.js';
 import router from './Routes/messageRoutes.js';
 import conversationRoute from './Routes/FriendConversationRoute.js'
 import FriendConversation from './model/FriendConversationId.js';
+import ActiverUserRoute from './Routes/ActiveUserRoute.js'
 import 'dotenv/config'
 import AppError from './utils/AppError.js';
 import { globalErrorHandler } from './controller/errorContoller.js';
+import ActiveUsers from './model/ActiveUserModel.js';
 
 
 const app = express();
@@ -31,7 +33,7 @@ app.use( express.json() );
 app.use( '/message', router )
 app.use( '/user', userRouter )
 app.use( '/create-conversation', conversationRoute )
-
+app.use( '/active-users', ActiverUserRoute )
 app.use( express.json() );
 
 app.use( ( err, req, res, next ) => {
@@ -51,22 +53,40 @@ mongoose.connect( process.env.MONGO_URL )
 
 
 // Socket.io connection
-let activeUsers = [];
+
 io.on( 'connection', ( socket ) => {
+    let check = false;
+    socket.on( 'new-user-added', async ( newUserId ) => {
+        try {
+            console.log( newUserId );
 
-    socket.on( 'new-user-added', ( newUserId ) => {
-        console.log( newUserId );
-        if ( !activeUsers.some( ( user ) => user.userId === newUserId.data._id ) ) {
-            activeUsers.push( { name: newUserId.data.name, userId: newUserId.data._id, socketId: socket.id } )
+            // activeUsers.push( { name: newUserId.data.name, userId: newUserId.data._id, socketId: socket.id } )
+            const { name, _id } = newUserId.data
+            console.log( _id )
+            const socket_id = socket.id
 
+            const existingUser = await ActiveUsers.findOne( { user_id: _id } );
+
+            if ( !existingUser ) {
+                const activeUsers = new ActiveUsers( { name: name, user_id: _id, socket_id: socket_id } )
+                // const activeUsers = new ActiveUsers( activeUserData );
+                await activeUsers.save( {} )
+            }
+
+        } catch ( err ) {
+            console.log( 'Error from Connection : ', err )
         }
-        io.emit( "get-users", activeUsers )
     } )
 
-    console.log( activeUsers )
+
     socket.on( 'send-req', ( data ) => {
-        const { sender_id, receiver_id } = { data }
-        console.log( sender_id, receiver_id )
+        try {
+            const { sender_id, receiver_id } = { data }
+            console.log( sender_id, receiver_id )
+        } catch ( err ) {
+            console.log( 'Error from send_req : ', err )
+        }
+
     } )
 
     // io.on("connection", (socket) => {
@@ -77,11 +97,14 @@ io.on( 'connection', ( socket ) => {
     // } );
 
     socket.on( 'message', async ( msg ) => {
-
-        console.log( msg );
-        io.emit( 'messageResponse', msg )
-        const newMessage = new Message( msg );
-        await newMessage.save();
+        try {
+            console.log( msg );
+            io.emit( 'messageResponse', msg )
+            const newMessage = new Message( msg );
+            await newMessage.save();
+        } catch ( err ) {
+            console.log( 'Error from messages : ', err )
+        }
     } )
 
     // socket.on( 'send-friend-request', async ( data ) => {
@@ -96,20 +119,35 @@ io.on( 'connection', ( socket ) => {
     //     }
     // } )
 
-
-
     // Handle disconnection
-    socket.on( 'disconnect', () => {
-        activeUsers = activeUsers.filter( ( user ) => user.socketId !== socket.id )
-        console.log( `User disconnected: ${ socket.id }` );
-        io.emit( "get-users", activeUsers )
+
+    socket.on( 'check', async ( value ) => {
+        check = value.check
+        console.log( check )
+    } )
+
+    socket.on( 'disconnect', async () => {
+        try {
+            if ( check ) {
+                const socketId = socket.id
+
+                await ActiveUsers.deleteOne( {
+                    socket_id: socketId
+                } )
+            }
+            console.log( `User disconnected: ${ socket.id }` );
+        } catch ( err ) {
+            console.log(
+                'Error handling from discoonection : ', error
+            )
+        }
     } );
 
 
-    socket.on( "offline", () => {
-        // remove user from active users 
-        activeUsers = activeUsers.filter( ( users ) => users.socketId !== socket.id )
-    } )
+    // socket.on( "offline", () => {
+    //     // remove user from active users 
+
+    // } )
 } );
 
 
