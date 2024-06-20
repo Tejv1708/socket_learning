@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post( '/', uploads.array( 'images', 6 ), createMessage )
 
-router.get( '/', getMessage )
+router.get( '/:receiver_id/:friendConversation_id', getMessage )
 
 router.delete( '/', deleteMessage )
 

@@ -8,7 +8,8 @@ export const createMessage = async ( req, res, next ) => {
     try {
 
         const { sender_id, friendsAndConversation_id, textmessage } = req.body;
-        console.log( req.body )
+        console.log( typeof ( sender_id ) )
+        console.log( typeof ( friendsAndConversation_id ) )
         // This is how we handle the multiple files
         const fileData = req.files ? req.files.map( file => file.path ) : [];
 
@@ -110,11 +111,18 @@ export const createMessage = async ( req, res, next ) => {
 
 
 
-
+// Apply filtering to get the message from specific sender 
 export const getMessage = async ( req, res ) => {
     try {
         const messages = await Message.find();
-        res.status( 200 ).json( messages )
+        const { receiver_id, friendConversation_id } = req.params;
+        const { sender_id } = await FriendConversation.findById( friendConversation_id ).populate( 'receiver_id' )
+        const string_sender_id = sender_id.toString()
+        // console.log( sender_id )
+        // console.log( string_sender_id === sender_id.toString() )
+        const message = messages.filter( ( el ) => ( string_sender_id === el.sender_id.toString() ) )
+
+        res.status( 200 ).json( message )
     } catch ( error ) {
         res.status( 500 ).json( { error: error.message } )
     }
