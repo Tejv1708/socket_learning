@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import FriendConversation from "../model/FriendConversationId.js";
 import Message from "../model/messageSchema.js";
 
@@ -8,21 +9,21 @@ export const createMessage = async ( req, res, next ) => {
     try {
 
         const { sender_id, friendsAndConversation_id, textmessage } = req.body;
-        console.log( typeof ( sender_id ) )
-        console.log( typeof ( friendsAndConversation_id ) )
+        // console.log( typeof ( sender_id ) )
+        // console.log( typeof ( friendsAndConversation_id ) )
         // This is how we handle the multiple files
         const fileData = req.files ? req.files.map( file => file.path ) : [];
 
         const checkFriendID = await FriendConversation.findById( friendsAndConversation_id ).populate( 'sender_id' )
-        console.log( checkFriendID )
+        // console.log( checkFriendID )
         const ref_receiver_id = checkFriendID.receiver_id.toString()
 
         // Convert ObjectId to string
         const ref_sender_id = checkFriendID.sender_id._id.toString();
 
-        console.log( sender_id === ref_sender_id );
-        console.log( sender_id === ref_receiver_id );
-        console.log( !( sender_id === ref_sender_id ) || !( sender_id === ref_receiver_id ) );
+        // console.log( sender_id === ref_sender_id );
+        // console.log( sender_id === ref_receiver_id );
+        // console.log( !( sender_id === ref_sender_id ) || !( sender_id === ref_receiver_id ) );
 
 
 
@@ -112,11 +113,18 @@ export const createMessage = async ( req, res, next ) => {
 
 
 // Apply filtering to get the message from specific sender 
-export const getMessage = async ( req, res ) => {
+export const getMessage = async ( req, res, next ) => {
     try {
         const messages = await Message.find();
         const { receiver_id, friendConversation_id } = req.params;
+        console.log( typeof ( friendConversation_id ) )
+        // const string_friendConversation_id = new ObjectId( friendConversation_id )
+        console.log( typeof ( friendConversation_id ) )
+        // console.log( string_friendConversation_id )
+
         const { sender_id } = await FriendConversation.findById( friendConversation_id ).populate( 'receiver_id' )
+        // console.log( "data from get Message", data )
+        console.log( "data from messahge about the sender_id ", sender_id )
         const string_sender_id = sender_id.toString()
         // console.log( sender_id )
         // console.log( string_sender_id === sender_id.toString() )
@@ -124,7 +132,7 @@ export const getMessage = async ( req, res ) => {
 
         res.status( 200 ).json( message )
     } catch ( error ) {
-        res.status( 500 ).json( { error: error.message } )
+        console.log( error )
     }
 }
 

@@ -3,10 +3,11 @@ import catchAsync from '../utils/catchAsync.js';
 
 
 export const generatedId = catchAsync( async ( req, res, next ) => {
-    try {
-        const { sender_id, receiver_id } = req.body;
-        console.log( "IDs", req.body )
 
+    try {
+        const { sender_id, receiver_id, status } = req.body;
+        // console.log( "IDs", req.body )
+        console.log( status )
         const existingConversation = await FriendConversation.findOne( {
             $or: [
                 { sender_id: sender_id, receiver_id: receiver_id },
@@ -14,7 +15,7 @@ export const generatedId = catchAsync( async ( req, res, next ) => {
             ]
         } );
 
-        console.log( existingConversation )
+        // console.log( existingConversation )
 
         if ( existingConversation ) {
             return res.status( 404 ).json( 'Chat Group is already created ' );
@@ -32,10 +33,10 @@ export const generatedId = catchAsync( async ( req, res, next ) => {
             receiver_id: receiver_id,
             sender_id: sender_id
         } );
-        console.log( newConversation )
+        // console.log( newConversation )
 
         // const senderDetail = FriendConversation.findById( senderID ).populate( "senderID" )
-
+        next( 'Your id is created ' )
         res.status( 201 ).json( {
             data: newConversation,
             status: 'New conversation created'
@@ -46,6 +47,17 @@ export const generatedId = catchAsync( async ( req, res, next ) => {
         res.status( 500 ).json( 'Internal Server Error' );
     }
 } );
+
+
+export const accept = async ( req, res, next ) => {
+    const { requested_id } = req.body;
+    await FriendConversation.findById( requested_id, { status: "accepted" } )
+}
+
+export const rejected = async ( req, res, next ) => {
+    const { receiver_id } = req.body
+    await FriendConversation.findByIdAndUpdate( requested_id, { status: "rejected" } )
+}
 
 // export const generatedId = async ( req, res, next ) => {
 //     try {

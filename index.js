@@ -56,6 +56,8 @@ mongoose.connect( process.env.MONGO_URL )
 
 io.on( 'connection', ( socket ) => {
     let check = false;
+    const { id } = socket;
+    console.log( 'socket id', id );
     socket.on( 'new-user-added', async ( newUserId ) => {
         try {
             console.log( newUserId );
@@ -99,23 +101,31 @@ io.on( 'connection', ( socket ) => {
         try {
             console.log( msg );
             const newMessage = new Message( msg );
+            const checkId = FriendConversation.findById( msg.friendsAndConversation_id )
+            if ( !checkId ) {
+                return new Error( 'Friend Conversation Id not exixts' )
+            }
+            console.log( "From the message socket ", newMessage )
             await newMessage.save();
+            socket.emit( "messageResponse", newMessage )
         } catch ( err ) {
             console.log( 'Error from messages : ', err )
         }
     } )
 
-    // socket.on( 'send-friend-request', async ( data ) => {
-    //     try {
-    //         const { sender_id, receiver_id } = data
-    //         const friendsAndConversation = new FriendConversation( { sender_id: sender_id, receiver_id: receiver_id } )
-    //         await friendsAndConversation.save()
+    socket.on( 'send-friend-request', async ( data ) => {
+        try {
+            const { sender_id, receiver_id } = data
+            console.log( "Receuver _id in backend", receiver_id )
+            if ( receiver_id ) {
+                console.log( receiver_id )
+                io.to( receiver_id ).emit( 'receiverRequest', { receiver_id } )
+            }
 
-    //         const receiverSocket_id = 
-    //     } catch ( err ) {
-    //         console.log( err )
-    //     }
-    // } )
+        } catch ( err ) {
+            console.log( err )
+        }
+    } )
 
     // Handle disconnection
 

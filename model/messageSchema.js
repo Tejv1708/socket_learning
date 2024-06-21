@@ -16,13 +16,13 @@ const schema = new mongoose.Schema( {
         ref: "User",
         // required: true
     },
+
     message: {
-        textmessage: {
-            type: String
-        }, file: {
-            type: Array
-        }
+        type: String
+    }, file: {
+        type: Array
     }
+
 
 
 }, { timestamps: true } )

@@ -8,8 +8,13 @@ const FriendConversationSchema = new mongoose.Schema( {
     receiver_id: {
         type: mongoose.Schema.ObjectId,
         ref: 'User'
-    }
-} )
+    },
+    status: {
+        type: String,
+        enum: [ "pending", "Accept", "rejected" ],
+        default: "pending"  // Set the default value to "pending"
+    },
+}, { timestamps: true } )
 
 const FriendConversation = mongoose.model( 'FriendConversation', FriendConversationSchema );
 
